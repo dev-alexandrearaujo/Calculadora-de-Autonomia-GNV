@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#F4F3F1;color:#31312F;padding:16px;font-size:13px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #DCD6CB}
+.page-icon{width:36px;height:36px;background:#3F5964;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.page-title{font-size:16px;font-weight:700;color:#31312F}
+.page-subtitle{font-size:11px;color:#5E493D;margin-top:2px}
+.page-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:#3F5964;color:#FFFFFF;align-self:center}
+.tabs{display:flex;gap:0;border:1.5px solid #DCD6CB;border-radius:6px;overflow:hidden}
+.tab-btn{font-size:11px;padding:5px 16px;border:none;background:#FFFFFF;color:#4E4D4D;cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s}
+.tab-btn.active{background:#3F5964;color:#FFFFFF}
+.tab-btn:not(:last-child){border-right:1.5px solid #DCD6CB}
+.card{background:#FFFFFF;border:1px solid #DCD6CB;border-radius:8px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card-header{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.card-dot{width:3px;height:14px;border-radius:2px}
+.card-title{font-size:10px;font-weight:700;color:#5E493D;text-transform:uppercase;letter-spacing:.8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.param-label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.param-name{font-size:11px;color:#4E4D4D;font-weight:400}
+.param-val{font-size:13px;font-weight:700;color:#3F5964;background:#D6E2E7;padding:1px 9px;border-radius:4px;border:1px solid #9DABB6}
+input[type=range]{width:100%;accent-color:#3F5964;cursor:pointer}
+.param-bounds{display:flex;justify-content:space-between;font-size:10px;color:#9CA293;margin-top:2px}
+.param-note{font-size:10px;color:#5E493D;margin-top:5px;padding-top:5px;border-top:1px solid #DCD6CB}
+.param-note strong{color:#3F5964}
+.tanks-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.tank-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pill-primary{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#3F5964;color:#FFFFFF}
+.pill-active{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#D6E8B2;color:#313B1D;border:1px solid #9CA293}
+.pill-inactive{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#DCD6CB;color:#5E493D;border:1px solid #C9B399}
+.tank-total-row{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #DCD6CB;flex-wrap:wrap}
+.tank-chip{font-size:11px;font-weight:700;background:#D6E2E7;color:#3F5964;padding:2px 9px;border-radius:4px;border:1px solid #9DABB6}
+.tank-extra-note{font-size:11px;color:#9CA293;font-style:italic}
+.metric-card{background:#F4F3F1;border:1px solid #DCD6CB;border-radius:7px;padding:10px 12px}
+.metric-label{font-size:10px;color:#9CA293;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.metric-val{font-size:16px;font-weight:700;color:#31312F;line-height:1}
+.metric-unit{font-size:11px;color:#9CA293;margin-left:2px;font-weight:400}
+.kpi-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.kpi-card{background:#3F5964;border-radius:7px;padding:10px 12px;text-align:center}
+.kpi-label{font-size:10px;color:#9DABB6;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-val{font-size:17px;font-weight:700;color:#FFFFFF}
+.progress-section{margin-top:10px;padding-top:10px;border-top:1px solid #DCD6CB}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.progress-title{font-size:10px;font-weight:700;color:#5E493D;text-transform:uppercase;letter-spacing:.5px}
+.progress-chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px}
+.chip-used{background:#9DABB6;color:#31312F}
+.chip-res{background:#F4B145;color:#31312F}
+.chip-livre{background:#DCD6CB;color:#5E493D}
+.chip-green{background:#D6E8B2;color:#313B1D}
+.chip-yellow{background:#F4B145;color:#31312F}
+.chip-red{background:#FA4939;color:#FFFFFF}
+.progress-track{height:14px;background:#F4F3F1;border-radius:20px;overflow:hidden;display:flex;border:1px solid #DCD6CB}
+.prog-used{height:100%;background:#9DABB6;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#31312F;transition:width .3s;overflow:hidden}
+.prog-res{height:100%;background:#F4B145;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#31312F;transition:width .3s;overflow:hidden}
+.prog-left{height:100%;background:#D6E8B2;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#313B1D;transition:width .3s;overflow:hidden}
+.prog-left.warn{background:#F4B145}
+.prog-left.bad{background:#FA4939;color:#FFFFFF}
+.prog-legend{display:flex;gap:12px;margin-top:5px;flex-wrap:wrap}
+.prog-legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:#9CA293}
+.prog-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.status-box{border-radius:8px;padding:14px 16px;border:1.5px solid;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.status-box.ok{background:#F0F6EB;border-color:#D6E8B2}
+.status-box.warn{background:#FDF6E7;border-color:#F4B145}
+.status-box.bad{background:#FDF0EE;border-color:#FA4939}
+.status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.status-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;font-weight:700}
+.ok .status-icon{background:#D6E8B2;color:#313B1D}
+.warn .status-icon{background:#F4B145;color:#31312F}
+.bad .status-icon{background:#FA4939;color:#FFFFFF}
+.status-title{font-size:13px;font-weight:700}
+.ok .status-title{color:#313B1D}
+.warn .status-title{color:#5E3A00}
+.bad .status-title{color:#A8203D}
+.status-subtitle{font-size:10px;margin-top:1px;color:#5E493D}
+.saldo-pill{font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px}
+.ok .saldo-pill{background:#D6E8B2;color:#313B1D}
+.warn .saldo-pill{background:#F4B145;color:#31312F}
+.bad .saldo-pill{background:#FA4939;color:#FFFFFF}
+.dual-bar-wrap{margin-bottom:8px}
+.dual-bar-label{display:flex;justify-content:space-between;font-size:10px;color:#9CA293;margin-bottom:3px}
+.dual-bar-track{height:8px;background:#DCD6CB;border-radius:10px;overflow:hidden}
+.dual-bar-fill{height:100%;border-radius:10px;transition:width .3s}
+.fill-dist{background:#9DABB6}
+.fill-util{background:#D6E8B2}
+.fill-util.warn{background:#F4B145}
+.fill-util.bad{background:#FA4939}
+.status-footer{display:flex;margin-top:10px;border:1px solid #DCD6CB;border-radius:6px;overflow:hidden;background:#FFFFFF}
+.footer-stat{flex:1;padding:7px 10px;text-align:center;border-right:1px solid #DCD6CB}
+.footer-stat:last-child{border-right:none}
+.footer-stat-label{font-size:9px;color:#9CA293;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.footer-stat-val{font-size:13px;font-weight:700;color:#31312F}
+.detail-table{width:100%;font-size:12px;border-collapse:collapse}
+.detail-table thead tr{border-bottom:2px solid #DCD6CB}
+.detail-table th{font-size:10px;font-weight:700;color:#5E493D;padding:6px 8px;text-align:right;text-transform:uppercase;letter-spacing:.3px}
+.detail-table th:first-child{text-align:left}
+.detail-table td{padding:6px 8px;text-align:right;color:#31312F;border-bottom:1px solid #F4F3F1}
+.detail-table td:first-child{text-align:left;color:#9CA293}
+.detail-table tr.hl-row td{color:#3F5964;font-weight:700;border-top:1px solid #DCD6CB}
+.detail-table tr.sep td{padding-top:10px;border-top:2px solid #DCD6CB}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="page-icon">⛽</div>
+    <div>
+      <div class="page-title">Calculadora de Autonomia GNV</div>
+      <div class="page-subtitle">Simulador de capacidade · Caminhoes GNV</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="page-badge">Simulacao</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setView('resumida')">Resumida</button>
+      <button class="tab-btn" onclick="setView('detalhada')">Detalhada</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-dot" style="background:#3F5964"></div><span class="card-title">Configuracoes Tecnicas</span></div>
+  <div class="two-col">
+    <div>
+      <div class="param-label-row"><span class="param-name">Pressao abastecimento</span><span class="param-val" id="v-pressao">200 bar</span></div>
+      <input type="range" min="100" max="300" step="5" value="200" id="pressao" oninput="update()">
+      <div class="param-bounds"><span>100 bar</span><span>300 bar</span></div>
+    </div>
+    <div>
+      <div class="param-label-row"><span class="param-name">Reserva de seguranca</span><span class="param-val" id="v-reserva">10%</span></div>
+      <input type="range" min="0" max="30" step="1" value="10" id="reserva" oninput="update()">
+      <div class="param-bounds"><span>0%</span><span>30%</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="tanks-grid">
+  <div class="card">
+    <div class="tank-header">
+      <div style="display:flex;align-items:center;gap:6px"><div class="card-dot" style="background:#3F5964"></div><span class="card-title">Tanque Principal</span></div>
+      <span class="pill-primary">PRINCIPAL</span>
+    </div>
+    <div style="margin-bottom:10px">
+      <div class="param-label-row"><span class="param-name">Qtd. cilindros</span><span class="param-val" id="v-cil-p">8</span></div>
+      <input type="range" min="1" max="20" step="1" value="8" id="cil-p" oninput="update()">
+      <div class="param-bounds"><span>1</span><span>20</span></div>
+    </div>
+    <div>
+      <div class="param-label-row"><span class="param-name">Cap. por cilindro</span><span class="param-val" id="v-cap-p">118 L</span></div>
+      <input type="range" min="10" max="500" step="1" value="118" id="cap-p" oninput="update()">
+      <div class="param-bounds"><span>10 L</span><span>500 L</span></div>
+    </div>
+    <div class="tank-total-row">
+      <span class="tank-chip" id="tot-p-l">944 L</span>
+      <span class="tank-chip" id="tot-p-m3">0,944 m³</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="tank-header">
+      <div style="display:flex;align-items:center;gap:6px"><div class="card-dot" style="background:#C9B399"></div><span class="card-title">Tanque Extra</span></div>
+      <span id="extra-pill" class="pill-inactive">INATIVO</span>
+    </div>
+    <div style="margin-bottom:10px">
+      <div class="param-label-row"><span class="param-name">Qtd. cilindros</span><span class="param-val" id="v-cil-e">0</span></div>
+      <input type="range" min="0" max="20" step="1" value="0" id="cil-e" oninput="update()">
+      <div class="param-bounds"><span>0</span><span>20</span></div>
+    </div>
+    <div>
+      <div class="param-label-row"><span class="param-name">Cap. por cilindro</span><span class="param-val" id="v-cap-e">0 L</span></div>
+      <input type="range" min="0" max="500" step="1" value="0" id="cap-e" oninput="update()">
+      <div class="param-bounds"><span>0 L</span><span>500 L</span></div>
+    </div>
+    <div class="tank-total-row" id="extra-total-row">
+      <span class="tank-extra-note" id="label-extra">Sem tanque extra configurado</span>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-dot" style="background:#C9B399"></div><span class="card-title">Parametros da Rota</span></div>
+  <div class="two-col">
+    <div>
+      <div class="param-label-row"><span class="param-name">Distancia da rota</span><span class="param-val" id="v-dist">300 km</span></div>
+      <input type="range" min="0" max="5000" step="10" value="300" id="dist" oninput="update()">
+      <div class="param-bounds"><span>0 km</span><span>5.000 km</span></div>
+      <div class="param-note">GNV necessario: <strong id="rota-gnv-nec">85,7 kg</strong> &nbsp;·&nbsp; <strong id="rota-gnv-m3">115,8 Nm³</strong></div>
+    </div>
+    <div>
+      <div class="param-label-row"><span class="param-name">Consumo medio (km/kg)</span><span class="param-val" id="v-consumo">3,5</span></div>
+      <input type="range" min="0.5" max="10" step="0.1" value="3.5" id="consumo" oninput="update()">
+      <div class="param-bounds"><span>0,5</span><span>10,0</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="view-resumida">
+  <div class="card">
+    <div class="card-header"><div class="card-dot" style="background:#9CA293"></div><span class="card-title">Consolidado</span></div>
+    <div class="three-col" style="margin-bottom:8px">
+      <div class="metric-card"><div class="metric-label">Cap. Total</div><div class="metric-val" id="c-l">944<span class="metric-unit">L</span></div></div>
+      <div class="metric-card"><div class="metric-label">Cap. Total</div><div class="metric-val" id="c-m3">0,944<span class="metric-unit">m³</span></div></div>
+      <div class="metric-card"><div class="metric-label">Vol. Normal</div><div class="metric-val" id="c-nm3">186,3<span class="metric-unit">Nm³</span></div></div>
+      <div class="metric-card"><div class="metric-label">Massa Total</div><div class="metric-val" id="c-kg">137,9<span class="metric-unit">kg</span></div></div>
+      <div class="metric-card"><div class="metric-label">Pressao</div><div class="metric-val" id="c-bar">200<span class="metric-unit">bar</span></div></div>
+      <div class="metric-card"><div class="metric-label">Reserva</div><div class="metric-val" id="c-res">10<span class="metric-unit">%</span></div></div>
+    </div>
+    <div class="kpi-trio">
+      <div class="kpi-card"><div class="kpi-label">Aut. Total</div><div class="kpi-val" id="c-aut-tot">483 km</div></div>
+      <div class="kpi-card"><div class="kpi-label">Aut. Util</div><div class="kpi-val" id="c-aut-util">434 km</div></div>
+      <div class="kpi-card"><div class="kpi-label">Reserva</div><div class="kpi-val" id="c-aut-res">48 km</div></div>
+    </div>
+    <div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-title">Uso do Tanque</span>
+        <div class="progress-chips">
+          <span class="chip chip-used" id="chip-usado">62% rota</span>
+          <span class="chip chip-res" id="chip-res">10% reserva</span>
+          <span class="chip chip-livre" id="chip-livre">28% saldo</span>
+        </div>
+      </div>
+      <div class="progress-track">
+        <div class="prog-used" id="tank-fill-util" style="width:62%"></div>
+        <div class="prog-res" id="tank-fill-res" style="width:10%"></div>
+        <div class="prog-left" id="tank-fill-livre" style="width:28%"></div>
+      </div>
+      <div class="prog-legend">
+        <div class="prog-legend-item"><div class="prog-dot" style="background:#9DABB6"></div>Utilizado pela rota</div>
+        <div class="prog-legend-item"><div class="prog-dot" style="background:#F4B145"></div>Reserva de seguranca</div>
+        <div class="prog-legend-item"><div class="prog-dot" style="background:#DCD6CB;border:1px solid #C9B399"></div>Saldo disponivel</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-detalhada" class="hidden">
+  <div class="card">
+    <div class="card-header"><div class="card-dot" style="background:#9CA293"></div><span class="card-title">Detalhamento por Tanque</span></div>
+    <table class="detail-table">
+      <thead><tr><th>Grandeza</th><th>Principal</th><th>Extra</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td>Cilindros</td><td id="d-cil-p">8</td><td id="d-cil-e">0</td><td id="d-cil-t">8</td></tr>
+        <tr><td>Capacidade (L)</td><td id="d-l-p">944 L</td><td id="d-l-e">0 L</td><td id="d-l-t">944 L</td></tr>
+        <tr><td>Capacidade (m³)</td><td id="d-m3-p">0,944</td><td id="d-m3-e">0,000</td><td id="d-m3-t">0,944</td></tr>
+        <tr><td>Vol. Normal (Nm³)</td><td id="d-nm3-p">186,3</td><td id="d-nm3-e">0,0</td><td id="d-nm3-t">186,3</td></tr>
+        <tr><td>Massa GNV (kg)</td><td id="d-kg-p">137,9</td><td id="d-kg-e">0,0</td><td id="d-kg-t">137,9</td></tr>
+        <tr><td>Autonomia (km)</td><td id="d-aut-p">483</td><td id="d-aut-e">0</td><td id="d-aut-t">483</td></tr>
+        <tr class="sep"><td style="color:#F4B145">Reserva (km)</td><td></td><td></td><td id="d-res-km" style="color:#F4B145">48</td></tr>
+        <tr class="hl-row"><td>Aut. Util (km)</td><td></td><td></td><td id="d-util-km">434</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="status-box ok" id="status-box">
+  <div class="status-top">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="status-icon" id="status-icon">✓</div>
+      <div>
+        <div class="status-title" id="status-label">Rota OK</div>
+        <div class="status-subtitle" id="status-sub">Autonomia util suficiente para completar a rota</div>
+      </div>
+    </div>
+    <span class="saldo-pill" id="saldo-badge">Sobram 182 km</span>
+  </div>
+  <div class="dual-bar-wrap">
+    <div class="dual-bar-label"><span>Distancia da rota</span><span id="bar-dist-val">300 km</span></div>
+    <div class="dual-bar-track"><div class="dual-bar-fill fill-dist" id="bar-dist" style="width:62%"></div></div>
+  </div>
+  <div class="dual-bar-wrap">
+    <div class="dual-bar-label"><span>Autonomia util</span><span id="bar-aut-val">434 km</span></div>
+    <div class="dual-bar-track"><div class="dual-bar-fill fill-util" id="bar-aut" style="width:90%"></div></div>
+  </div>
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-title">Autonomia consumida pela rota</span>
+      <div class="progress-chips">
+        <span class="chip chip-used" id="badge-used">62% rota</span>
+        <span class="chip chip-green" id="badge-left">38% sobra</span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="prog-used" id="rota-fill-used" style="width:62%">62%</div>
+      <div class="prog-left" id="rota-fill-left" style="width:38%">38%</div>
+    </div>
+  </div>
+  <div class="status-footer">
+    <div class="footer-stat"><div class="footer-stat-label">GNV necessario</div><div class="footer-stat-val" id="gnv-nec">85,7 kg</div></div>
+    <div class="footer-stat"><div class="footer-stat-label">Saldo GNV</div><div class="footer-stat-val" id="saldo-gnv">+52,2 kg</div></div>
+    <div class="footer-stat"><div class="footer-stat-label">GNV em Nm³</div><div class="footer-stat-val" id="gnv-nec-nm3">115,8 Nm³</div></div>
+  </div>
+</div>
+
+<script>
+const DENS=0.74,ATM=1.01325;
+function fmt(n,d=0){return n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function get(id){return parseFloat(document.getElementById(id).value)}
+function set(id,val){const el=document.getElementById(id);if(el)el.textContent=val}
+function pct(v){return Math.round(Math.max(0,Math.min(100,v)))}
+
+function update(){
+  const pressao=get('pressao'),reservaPerc=get('reserva')/100;
+  const cilP=get('cil-p'),capP=get('cap-p');
+  const cilE=get('cil-e'),capE=get('cap-e');
+  const dist=get('dist'),consumo=get('consumo');
+
+  const capLP=cilP*capP,capLE=cilE*capE,capLT=capLP+capLE;
+  const capM3P=capLP/1000,capM3E=capLE/1000,capM3T=capLT/1000;
+  const nm3P=capLP*pressao/ATM/1000,nm3E=capLE*pressao/ATM/1000,nm3T=nm3P+nm3E;
+  const kgP=nm3P*DENS,kgE=nm3E*DENS,kgT=kgP+kgE;
+  const kgRes=kgT*reservaPerc,kgUtil=kgT-kgRes;
+  const autP=kgP*consumo,autE=kgE*consumo,autT=kgT*consumo;
+  const autUtil=kgUtil*consumo,autRes=kgRes*consumo;
+  const gnvNec=consumo>0?dist/consumo:0;
+  const gnvNecNm3=gnvNec/DENS;
+  const saldoKg=kgT-gnvNec,saldoKm=autT-dist;
+
+  set('v-pressao',fmt(pressao)+' bar');set('v-reserva',fmt(reservaPerc*100)+'%');
+  set('v-cil-p',cilP);set('v-cap-p',fmt(capP)+' L');
+  set('v-cil-e',cilE);set('v-cap-e',fmt(capE)+' L');
+  set('tot-p-l',fmt(capLP)+' L');set('tot-p-m3',capM3P.toFixed(3).replace('.',',')+' m³');
+  set('v-dist',fmt(dist)+' km');set('v-consumo',consumo.toFixed(1).replace('.',','));
+  set('rota-gnv-nec',gnvNec.toFixed(1).replace('.',',')+' kg');
+  set('rota-gnv-m3',gnvNecNm3.toFixed(1).replace('.',',')+' Nm³');
+
+  const temExtra=cilE>0&&capE>0;
+  const pill=document.getElementById('extra-pill');
+  const labelExtra=document.getElementById('label-extra');
+  if(temExtra){
+    pill.textContent='ATIVO';pill.className='pill-active';
+    labelExtra.innerHTML='<span class="tank-chip">'+fmt(capLE)+' L</span>&nbsp;<span class="tank-chip">'+capM3E.toFixed(3).replace('.',',')+'m³</span>';
+  } else {
+    pill.textContent='INATIVO';pill.className='pill-inactive';
+    labelExtra.innerHTML='<span class="tank-extra-note">Sem tanque extra configurado</span>';
+  }
+
+  set('c-l',fmt(capLT));set('c-m3',capM3T.toFixed(3).replace('.',','));
+  set('c-nm3',nm3T.toFixed(1).replace('.',','));set('c-kg',kgT.toFixed(1).replace('.',','));
+  set('c-bar',fmt(pressao));set('c-res',fmt(reservaPerc*100));
+  set('c-aut-tot',fmt(autT)+' km');set('c-aut-util',fmt(autUtil)+' km');set('c-aut-res',fmt(autRes)+' km');
+
+  const pctUsado=kgT>0?pct(gnvNec/kgT*100):0;
+  const pctRes=pct(reservaPerc*100);
+  const pctLivre=Math.max(0,100-pctUsado-pctRes);
+  document.getElementById('tank-fill-util').style.width=Math.min(pctUsado,100)+'%';
+  document.getElementById('tank-fill-res').style.width=Math.min(pctRes,100-Math.min(pctUsado,100))+'%';
+  document.getElementById('tank-fill-livre').style.width=pctLivre+'%';
+  set('chip-usado',pctUsado+'% rota');set('chip-res',pctRes+'% reserva');set('chip-livre',pctLivre+'% saldo');
+
+  set('d-cil-p',cilP);set('d-cil-e',cilE);set('d-cil-t',cilP+cilE);
+  set('d-l-p',fmt(capLP)+' L');set('d-l-e',fmt(capLE)+' L');set('d-l-t',fmt(capLT)+' L');
+  set('d-m3-p',capM3P.toFixed(3).replace('.',','));set('d-m3-e',capM3E.toFixed(3).replace('.',','));set('d-m3-t',capM3T.toFixed(3).replace('.',','));
+  set('d-nm3-p',nm3P.toFixed(1).replace('.',','));set('d-nm3-e',nm3E.toFixed(1).replace('.',','));set('d-nm3-t',nm3T.toFixed(1).replace('.',','));
+  set('d-kg-p',kgP.toFixed(1).replace('.',','));set('d-kg-e',kgE.toFixed(1).replace('.',','));set('d-kg-t',kgT.toFixed(1).replace('.',','));
+  set('d-aut-p',fmt(autP));set('d-aut-e',fmt(autE));set('d-aut-t',fmt(autT));
+  set('d-res-km',fmt(autRes));set('d-util-km',fmt(autUtil));
+
+  const maxBar=Math.max(autT,dist,100);
+  document.getElementById('bar-dist').style.width=Math.min(100,dist/maxBar*100)+'%';
+  set('bar-dist-val',fmt(dist)+' km');set('bar-aut-val',fmt(autUtil)+' km');
+
+  const pctRota=autT>0?pct(dist/autT*100):0;
+  const pctSobra=Math.max(0,100-pctRota);
+  document.getElementById('rota-fill-used').style.width=pctRota+'%';
+  document.getElementById('rota-fill-left').style.width=pctSobra+'%';
+  set('rota-fill-used',pctRota>8?pctRota+'%':'');
+  set('rota-fill-left',pctSobra>8?pctSobra+'%':'');
+  set('badge-used',pctRota+'% rota');set('badge-left',pctSobra+'% sobra');
+
+  set('gnv-nec',gnvNec.toFixed(1).replace('.',',')+' kg');
+  set('gnv-nec-nm3',gnvNecNm3.toFixed(1).replace('.',',')+' Nm³');
+  set('saldo-gnv',(saldoKg>=0?'+':'')+saldoKg.toFixed(1).replace('.',',')+' kg');
+
+  let cls,icon,statusTxt,statusSub,saldoTxt;
+  if(dist<=autUtil){cls='ok';icon='✓';statusTxt='Rota OK';statusSub='Autonomia util suficiente para completar a rota';saldoTxt='Sobram '+fmt(Math.abs(saldoKm))+' km';}
+  else if(dist<=autT){cls='warn';icon='⚠';statusTxt='Atencao — Reserva consumida';statusSub='A rota exige uso da margem de seguranca';saldoTxt='Sobram '+fmt(Math.abs(saldoKm))+' km (reserva)';}
+  else{cls='bad';icon='✕';statusTxt='Abastecer — Autonomia insuficiente';statusSub='Combustivel insuficiente para completar a rota';saldoTxt='Faltam '+fmt(Math.abs(saldoKm))+' km';}
+
+  document.getElementById('status-box').className='status-box '+cls;
+  set('status-icon',icon);set('status-label',statusTxt);set('status-sub',statusSub);set('saldo-badge',saldoTxt);
+
+  const barAut=document.getElementById('bar-aut');
+  barAut.style.width=Math.min(100,autUtil/maxBar*100)+'%';
+  barAut.className='dual-bar-fill fill-util'+(cls!=='ok'?' '+cls:'');
+  document.getElementById('badge-left').className='chip'+(cls==='ok'?' chip-green':cls==='warn'?' chip-yellow':' chip-red');
+  document.getElementById('rota-fill-left').className='prog-left'+(cls!=='ok'?' '+cls:'');
+}
+
+function setView(v){
+  document.getElementById('view-resumida').classList.toggle('hidden',v!=='resumida');
+  document.getElementById('view-detalhada').classList.toggle('hidden',v!=='detalhada');
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',(i===0&&v==='resumida')||(i===1&&v==='detalhada'));
+  });
+}
+update();
+</script>
+</body>
+</html>
